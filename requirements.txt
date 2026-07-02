@@ -1,0 +1,9 @@
+streamlit
+opencv-python
+numpy
+pandas
+pillow
+ultralytics
+folium
+streamlit-folium
+geopy
