@@ -1,5 +1,6 @@
 import streamlit as st
 from datetime import datetime
+from zoneinfo import ZoneInfo
 import cv2
 import numpy as np
 from PIL import Image
@@ -12,6 +13,12 @@ from streamlit_folium import st_folium
 from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut, GeocoderServiceError
 import time
+
+IST = ZoneInfo("Asia/Kolkata")
+
+def now_ist():
+    """Server clocks (e.g. Streamlit Cloud) run in UTC, so convert explicitly."""
+    return datetime.now(IST)
 
 # ---------------- PAGE CONFIG ----------------
 st.set_page_config(
@@ -157,8 +164,8 @@ with st.sidebar:
     ])
 
     st.divider()
-    st.write("🕒", datetime.now().strftime("%d-%m-%Y"))
-    st.write("⏰", datetime.now().strftime("%H:%M:%S"))
+    st.write("🕒", now_ist().strftime("%d-%m-%Y"))
+    st.write("⏰", now_ist().strftime("%H:%M:%S"))
 
 # ==========================================================
 # DASHBOARD (now reflects real DB state, not random numbers)
@@ -338,7 +345,7 @@ elif page == "Image Scan":
                     (scan_date, change_percent, risk_level, latitude, longitude, detected_objects)
                     VALUES (?,?,?,?,?,?)""",
                     (
-                        datetime.now().strftime("%d-%m-%Y %H:%M:%S"),
+                        now_ist().strftime("%d-%m-%Y %H:%M:%S"),
                         change_percent,
                         risk,
                         float(st.session_state.lat),
