@@ -126,6 +126,15 @@ def get_connection():
         )
     """)
     conn.commit()
+
+    # Migration: older deployments may already have a "scans" table without
+    # the detected_objects column. CREATE TABLE IF NOT EXISTS won't add it,
+    # so check and patch the schema here.
+    existing_cols = [row[1] for row in conn.execute("PRAGMA table_info(scans)").fetchall()]
+    if "detected_objects" not in existing_cols:
+        conn.execute("ALTER TABLE scans ADD COLUMN detected_objects TEXT")
+        conn.commit()
+
     return conn
 
 conn = get_connection()
